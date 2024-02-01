@@ -1,27 +1,54 @@
-const express = require('express');
-const port = process.env.PORT || 3000; // this is our port nummber
-const path = require('path');
-const app = express(); // this is our app or instance of express
+const express = require("express");
+const path = require("path");
+const app = express();
+const port = process.env.PORT || 3000;
 
-// API Middelwares
-app.use(express.json()); // this is to aeccpt data in json format
-app.use(express.urlencoded()); // this is basically to decode the data send through html form
-app.use(express.static('public')); //this is server our public folder as a static folder
+app.use(express.json());
+app.use(express.urlencoded());
+app.use(express.static("public"));
 
-// API ROUTES
-app.get('/form' , (req,res) => {
-    res.sendFile(__dirname + '/public/index.html')
+const enteredData = [];
+let entryCounter = 1;
+
+// Login Page
+app.get("/form", (req, res) => {
+  res.sendFile(path.join(__dirname, "/public/Login.html"));
 });
 
-app.post('/formPost' , (req,res) => {
-    console.log(req.body); // the data we get is in the body of request
+// Post data with an incrementing ID
+app.post("/formPost", (req, res) => {
+  const data = req.body;
+  const entryWithId = { ...data, id: entryCounter++ };
+  console.log(entryWithId);
 
-    // Use path.join to construct the correct path
-    const thanksFilePath = path.join(__dirname, '/public/Thanks.html');
-    res.sendFile(thanksFilePath);
+  enteredData.push(entryWithId);
+
+  const thanksFilePath = path.join(__dirname, "/public/ShowDataList.html");
+  res.sendFile(thanksFilePath);
 });
 
-// this is basically to listen on port
-app.listen(port , () => {
-    console.log(`Server started at http://localhost:${port}`)
+// Update Data Page
+app.get("/update", (req, res) => {
+  res.sendFile(path.join(__dirname, "/public/UpdateData.html"));
+});
+
+app.put("/updateData", (req, res) => {
+  console.log("Updating data:", req.body);
+
+  res.status(200).json({ message: "Data updated successfully" });
+});
+
+// Show Data
+app.get("/dataList", (req, res) => {
+  res.sendFile(path.join(__dirname, "/public/ShowDataList.html"));
+});
+
+// API endpoint to get all entered data
+app.get("/api/data", (req, res) => {
+  res.json(enteredData);
+});
+
+// Port HTTP
+app.listen(port, () => {
+  console.log(`Server started at http://localhost:${port}`);
 });
