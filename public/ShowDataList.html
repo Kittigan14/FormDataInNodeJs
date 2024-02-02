@@ -74,13 +74,13 @@
     <thead>
       <tr>
         <th>ID</th>
-        <th>NAME</th>
+        <th>USERNAME</th>
         <th>EMAIL</th>
         <th>PASSWORD</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody id="dataRows">
-      <!-- Data rows will be dynamically added here -->
     </tbody>
   </table>
 
@@ -89,24 +89,43 @@
   </div>
 
   <script>
-    // Fetch data from the API endpoint and populate the table
-    fetch('/api/data')
-      .then(response => response.json())
-      .then(data => {
-        const dataRows = document.getElementById('dataRows');
+    const deleteData = (id) => {
+      fetch(`/api/data/${id}`, {
+          method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data.message);
+          // Refresh the data after deletion
+          fetchData();
+        })
+        .catch(error => console.error('Error deleting data:', error));
+    };
 
-        data.forEach(entry => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${entry.id}</td>
-            <td>${entry.name}</td>
-            <td>${entry.email}</td>
-            <td>${entry.password}</td>
-          `;
-          dataRows.appendChild(row);
-        });
-      })
-      .catch(error => console.error('Error fetching data:', error));
+    const fetchData = () => {
+      fetch('/api/data')
+        .then(response => response.json())
+        .then(data => {
+          const dataRows = document.getElementById('dataRows');
+          dataRows.innerHTML = ""; // Clear existing rows
+
+          data.forEach(entry => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${entry.id}</td>
+              <td>${entry.username}</td>
+              <td>${entry.email}</td>
+              <td>${entry.password}</td>
+              <td><button onclick="deleteData(${entry.id})">Delete</button></td>
+            `;
+            dataRows.appendChild(row);
+          });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    };
+
+    // Initial fetch
+    fetchData();
   </script>
 
 </body>
