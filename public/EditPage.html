@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Page</title>
+</head>
+<style>
+    * {
+        font-family: 'Inconsolata', monospace;
+        text-decoration: none;
+    }
+
+    body {
+        background-color: #f4f4f4;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+        margin-top: 40px;
+    }
+
+    .container {
+        text-align: center;
+    }
+
+    button {
+        background-color: #4568a0;
+        color: #f4f4f4;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    a {
+        color: #f4f4f4;
+    }
+
+    .container {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        width: 400px;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        text-align: left;
+    }
+
+    .con-group {
+        margin-top: 20px;
+    }
+</style>
+
+<body>
+
+    <script>
+        const getQueryParam = (name) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        };
+
+        const id = getQueryParam('id');
+        const username = getQueryParam('username') || '';
+        const email = getQueryParam('email') || '';
+        const password = getQueryParam('password') || '';
+
+        const saveChanges = () => {
+            const editedUsername = document.getElementById('editedUsername').value;
+            const editedEmail = document.getElementById('editedEmail').value;
+            const editedPassword = document.getElementById('editedPassword').value;
+
+            // Send the updated data to the server
+            fetch(`/updateData/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: editedUsername,
+                        email: editedEmail,
+                        password: editedPassword,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message);
+                    // Redirect back to the data list page after saving changes
+                    window.location.href = '/ShowDataList.html';
+                })
+                .catch(error => console.error('Error updating data:', error));
+        };
+    </script>
+
+    <div class="container">
+        <h1>Edit Information</h1>
+
+        <div class="con-group">
+            <label for="editedUsername">Edited Username:</label>
+            <input type="text" id="editedUsername" name="editedUsername" value="">
+        </div>
+
+        <div class="con-group">
+            <label for="editedEmail">Edited Email:</label>
+            <input type="text" id="editedEmail" name="editedEmail" value="">
+            <div>
+
+                <div class="con-group">
+                    <label for="editedPassword">Edited Password:</label>
+                    <input type="password" id="editedPassword" name="editedPassword" value="">
+                </div>
+
+                <button onclick="saveChanges()">Save Changes</button>
+</body>
+
+</html>

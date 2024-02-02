@@ -5,7 +5,9 @@ const sqlite3 = require('sqlite3')
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({
+    extended: true
+}));
 app.use(express.static('public'));
 
 const db = new sqlite3.Database("data.db");
@@ -54,17 +56,27 @@ app.post("/formPost", (req, res) => {
     });
 });
 
-// Update data path
-app.get('/update', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/UpdateData.html'));
+app.get("/update", (req, res) => {
+    res.sendFile(path.join(__dirname, "/public/UpdateData.html"));
 });
 
-// Update Data
-app.put('/updateData', (req, res) => {
-    console.log('Updating data:', req.body);
+// Handle update request
+app.put("/updateData/:id", (req, res) => {
+    const id = req.params.id;
+    const updatedData = req.body;
 
-    res.status(200).json({
-        message: 'Data updated successfully'
+    const sqlUpdate = "UPDATE entries SET username = ?, password = ?, email = ? WHERE id = ?";
+
+    db.run(sqlUpdate, [updatedData.username, updatedData.password, updatedData.email, id], function (err) {
+        if (err) {
+            return res.status(500).json({
+                error: err.message
+            });
+        }
+
+        res.status(200).json({
+            message: "Data updated successfully"
+        });
     });
 });
 
