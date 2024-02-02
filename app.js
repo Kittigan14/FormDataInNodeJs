@@ -85,7 +85,7 @@ app.get('/dataList', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/ShowDataList.html'));
 });
 
-// Data Id
+// Data
 app.get("/api/data", (req, res) => {
     const sqlSelect = "SELECT * FROM entries ORDER BY ROWID";
 
@@ -98,7 +98,7 @@ app.get("/api/data", (req, res) => {
     });
 });
 
-// Delete data by ID
+// Delete data
 app.delete("/api/data/:id", (req, res) => {
     const id = req.params.id;
     const sqlDelete = "DELETE FROM entries WHERE id = ?";
